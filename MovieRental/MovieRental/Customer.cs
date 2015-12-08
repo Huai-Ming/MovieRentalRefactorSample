@@ -24,49 +24,38 @@ namespace MovieRental
 
         public string Statement()
         {
-            double totalAmount = 0;
-            int frequentRenterPoints = 0;
             string result = "Rental record for " + this.Name + "\n";
 
             foreach(var rental in rentals)
             {
-                double thisAmount = 0;
-
-                switch(rental.Movie.PriceCode)
-                {
-                    case Movie.REGULAR:
-                        thisAmount += 2;
-                        if(rental.DayRented > 2)
-                        {
-                            thisAmount += (rental.DayRented - 2) * 1.5;
-                        }
-                        break;
-                    case Movie.NEW_RELEASE:
-                        thisAmount += rental.DayRented * 3;
-                        break;
-                    case Movie.CHILDRENS:
-                        thisAmount += 1.5;
-                        if(rental.DayRented >3)
-                        {
-                            thisAmount += (rental.DayRented - 3) * 1.5;
-                        }
-                        break;
-                }
-
-                //add frequent renter points
-                frequentRenterPoints++;
-                if((rental.Movie.PriceCode == Movie.NEW_RELEASE) && rental.DayRented > 1)
-                {
-                    frequentRenterPoints++;
-                }
-
-                result += "\t" + rental.Movie.Title + "\t" + thisAmount + "\n";
+                result += "\t" + rental.Movie.Title + "\t" + rental.GetCharge() + "\n";
             }
 
             // add footer lines
-            result += "Amount owed is " + totalAmount + "\n";
-            result += "You earned " + frequentRenterPoints + " frequent renter points";
+            result += "Amount owed is " + GetTotalCharge() + "\n";
+            result += "You earned " + GetTotalRenterPoints() + " frequent renter points";
             return result;
         }
+
+        private double GetTotalCharge()
+        {
+            double result = 0;
+            foreach (var rental in rentals)
+            {
+                result += rental.GetCharge();
+            }
+            return result;
+        }
+
+        private double GetTotalRenterPoints()
+        {
+            int frequentRenterPoints = 0;
+            foreach (var rental in rentals)
+            {
+                frequentRenterPoints += rental.GetFrequentRenterPoints();
+            }
+            return frequentRenterPoints;
+        }
+
     }
 }
