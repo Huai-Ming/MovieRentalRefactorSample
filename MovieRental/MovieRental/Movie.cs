@@ -14,12 +14,38 @@ namespace MovieRental
 
         public string Title { get; set; }
 
-        public int PriceCode { get; set; }
+        public int PriceCode 
+        {
+            get { return price.GetPriceCode(); }
+        }
+
+        private Price price;
 
         public Movie(string title, int priceCode)
         {
             this.Title = title;
-            this.PriceCode = priceCode;
+            SetPriceCode(priceCode);
+        }
+
+        public void SetPriceCode(int priceCode)
+        {
+            switch(priceCode)
+            {
+                case REGULAR:
+                    price = new RegularPrice();
+                    break;
+
+                case CHILDRENS:
+                    price = new ChidrensPrice();
+                    break;
+
+                case NEW_RELEASE:
+                    price = new NewReleasesPrice();
+                    break;
+
+                default:
+                    throw new ArgumentException("Incorrect Price code");
+            }
         }
 
         /// <summary>
@@ -29,40 +55,12 @@ namespace MovieRental
         /// <returns></returns>
         public double GetCharge(int daysRented)
         {
-            double result = 0;
-            switch (this.PriceCode)
-            {
-                case Movie.REGULAR:
-                    result += 2;
-                    if (daysRented > 2)
-                    {
-                        result += (daysRented - 2) * 1.5;
-                    }
-                    break;
-                case Movie.NEW_RELEASE:
-                    result += daysRented * 3;
-                    break;
-                case Movie.CHILDRENS:
-                    result += 1.5;
-                    if (daysRented > 3)
-                    {
-                        result += (daysRented - 3) * 1.5;
-                    }
-                    break;
-            }
-            return result;
+            return this.price.GetCharge(daysRented);
         }
 
         public int GetFrequentRenterPoints(int daysRented)
         {
-            if ((this.PriceCode == Movie.NEW_RELEASE) && daysRented > 1)
-            {
-                return 2;
-            }
-            else
-            {
-                return 1;
-            }
+            return this.price.GetFrequentRenterPoints(daysRented);
         }
     }
 }
