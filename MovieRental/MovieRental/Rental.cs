@@ -25,40 +25,12 @@ namespace MovieRental
         /// <returns></returns>
         public double GetCharge()
         {
-            double result = 0;
-            switch (this.Movie.PriceCode)
-            {
-                case Movie.REGULAR:
-                    result += 2;
-                    if (this.DayRented > 2)
-                    {
-                        result += (this.DayRented - 2) * 1.5;
-                    }
-                    break;
-                case Movie.NEW_RELEASE:
-                    result += this.DayRented * 3;
-                    break;
-                case Movie.CHILDRENS:
-                    result += 1.5;
-                    if (this.DayRented > 3)
-                    {
-                        result += (this.DayRented - 3) * 1.5;
-                    }
-                    break;
-            }
-            return result;
+            return this.Movie.GetCharge(this.DayRented);
         }
 
         public int GetFrequentRenterPoints()
         {
-            if ((this.Movie.PriceCode == Movie.NEW_RELEASE) && this.DayRented > 1)
-            {
-                return 2;
-            }
-            else
-            {
-                return 1;
-            }
+            return this.Movie.GetFrequentRenterPoints(this.DayRented);
         }
 
         
